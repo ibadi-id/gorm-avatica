@@ -247,10 +247,10 @@ func (dialector Dialector) QuoteTo(writer clause.Writer, str string) {
 
 	for _, v := range []byte(str) {
 		switch v {
-		case '`':
+		case '"':
 			continuousBacktick++
 			if continuousBacktick == 2 {
-				writer.WriteString("``")
+				writer.WriteString(`""`)
 				continuousBacktick = 0
 			}
 		case '.':
@@ -258,13 +258,13 @@ func (dialector Dialector) QuoteTo(writer clause.Writer, str string) {
 				shiftDelimiter = 0
 				underQuoted = false
 				continuousBacktick = 0
-				writer.WriteByte('`')
+				writer.WriteByte('"')
 			}
 			writer.WriteByte(v)
 			continue
 		default:
 			if shiftDelimiter-continuousBacktick <= 0 && !underQuoted {
-				writer.WriteByte('`')
+				writer.WriteByte('"')
 				underQuoted = true
 				if selfQuoted = continuousBacktick > 0; selfQuoted {
 					continuousBacktick -= 1
@@ -272,7 +272,7 @@ func (dialector Dialector) QuoteTo(writer clause.Writer, str string) {
 			}
 
 			for ; continuousBacktick > 0; continuousBacktick -= 1 {
-				writer.WriteString("``")
+				writer.WriteString(`""`)
 			}
 
 			writer.WriteByte(v)
@@ -281,9 +281,9 @@ func (dialector Dialector) QuoteTo(writer clause.Writer, str string) {
 	}
 
 	if continuousBacktick > 0 && !selfQuoted {
-		writer.WriteString("``")
+		writer.WriteString(`""`)
 	}
-	writer.WriteByte('`')
+	writer.WriteByte('"')
 }
 
 func (dialector Dialector) Explain(sql string, vars ...interface{}) string {
