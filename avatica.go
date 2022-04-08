@@ -290,7 +290,7 @@ func (dialector Dialector) getSchemaFloatType(field *schema.Field) string {
 	}
 
 	if field.Size <= 32 {
-		return "float"
+		return "decimal"
 	}
 
 	return "double"
@@ -310,43 +310,31 @@ func (dialector Dialector) getSchemaStringType(field *schema.Field) string {
 		}
 	}
 
-	if size >= 65536 && size <= int(math.Pow(2, 24)) {
-		return "mediumtext"
+	if size >= 65536 && size <= int(math.Pow(2, 15)) {
+		return "varchar"
 	}
 
-	if size > int(math.Pow(2, 24)) || size <= 0 {
-		return "longtext"
+	if size > int(math.Pow(2, 15)) || size <= 0 {
+		return fmt.Sprintf("char(%d)", size)
 	}
 
 	return fmt.Sprintf("varchar(%d)", size)
 }
 
 func (dialector Dialector) getSchemaTimeType(field *schema.Field) string {
-	precision := ""
-	if !dialector.DisableDatetimePrecision && field.Precision == 0 {
-		field.Precision = *dialector.DefaultDatetimePrecision
-	}
-
-	if field.Precision > 0 {
-		precision = fmt.Sprintf("(%d)", field.Precision)
-	}
-
-	if field.NotNull || field.PrimaryKey {
-		return "datetime" + precision
-	}
-	return "datetime" + precision + " NULL"
+	return "date"
 }
 
 func (dialector Dialector) getSchemaBytesType(field *schema.Field) string {
-	if field.Size > 0 && field.Size < 65536 {
-		return fmt.Sprintf("varbinary(%d)", field.Size)
-	}
+	// if field.Size > 0 && field.Size < 65536 {
+	// 	return fmt.Sprintf("varbinary(%d)", field.Size)
+	// }
 
-	if field.Size >= 65536 && field.Size <= int(math.Pow(2, 24)) {
-		return "mediumblob"
-	}
+	// if field.Size >= 65536 && field.Size <= int(math.Pow(2, 24)) {
+	// 	return "mediumblob"
+	// }
 
-	return "longblob"
+	return "binary"
 }
 
 func (dialector Dialector) getSchemaIntAndUnitType(field *schema.Field) string {
@@ -357,18 +345,18 @@ func (dialector Dialector) getSchemaIntAndUnitType(field *schema.Field) string {
 	case field.Size <= 16:
 		sqlType = "smallint"
 	case field.Size <= 24:
-		sqlType = "mediumint"
+		sqlType = "integer"
 	case field.Size <= 32:
-		sqlType = "int"
+		sqlType = "integer"
 	}
 
 	if field.DataType == schema.Uint {
-		sqlType += " unsigned"
+		sqlType += " unsigned_int"
 	}
 
-	if field.AutoIncrement {
-		sqlType += " AUTO_INCREMENT"
-	}
+	// if field.AutoIncrement {
+	// 	sqlType += " AUTO_INCREMENT"
+	// }
 
 	return sqlType
 }
