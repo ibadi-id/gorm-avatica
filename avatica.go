@@ -36,7 +36,7 @@ type Dialector struct {
 
 var (
 	// CreateClauses create clauses
-	CreateClauses = []string{"INSERT", "VALUES", "ON CONFLICT"}
+	CreateClauses = []string{"UPSERT", "VALUES"}
 	// QueryClauses query clauses
 	QueryClauses = []string{}
 	// UpdateClauses update clauses
