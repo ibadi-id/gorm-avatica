@@ -82,7 +82,6 @@ func (dialector Dialector) Apply(config *gorm.Config) error {
 }
 
 func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
-	// ctx := context.Background()
 
 	// register callbacks
 	callbacks.RegisterDefaultCallbacks(db, &callbacks.Config{
@@ -112,30 +111,6 @@ func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 	dialector.Config.DontSupportRenameIndex = true
 	dialector.Config.DontSupportRenameColumn = true
 	dialector.Config.DontSupportForShareClause = true
-	// if !dialector.Config.SkipInitializeWithVersion {
-	// 	err = db.ConnPool.QueryRowContext(ctx, "SELECT MAX(version)").Scan(&dialector.ServerVersion)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	if strings.Contains(dialector.ServerVersion, "MariaDB") {
-	// 		dialector.Config.DontSupportRenameIndex = true
-	// 		dialector.Config.DontSupportRenameColumn = true
-	// 		dialector.Config.DontSupportForShareClause = true
-	// 	} else if strings.HasPrefix(dialector.ServerVersion, "5.6.") {
-	// 		dialector.Config.DontSupportRenameIndex = true
-	// 		dialector.Config.DontSupportRenameColumn = true
-	// 		dialector.Config.DontSupportForShareClause = true
-	// 	} else if strings.HasPrefix(dialector.ServerVersion, "5.7.") {
-	// 		dialector.Config.DontSupportRenameColumn = true
-	// 		dialector.Config.DontSupportForShareClause = true
-	// 	} else if strings.HasPrefix(dialector.ServerVersion, "5.") {
-	// 		dialector.Config.DisableDatetimePrecision = true
-	// 		dialector.Config.DontSupportRenameIndex = true
-	// 		dialector.Config.DontSupportRenameColumn = true
-	// 		dialector.Config.DontSupportForShareClause = true
-	// 	}
-	// }
 
 	for k, v := range dialector.ClauseBuilders() {
 		db.ClauseBuilders[k] = v
