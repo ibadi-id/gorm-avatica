@@ -311,14 +311,14 @@ func (dialector Dialector) getSchemaStringType(field *schema.Field) string {
 	}
 
 	if size >= 65536 && size <= int(math.Pow(2, 15)) {
-		return "varchar"
+		return fmt.Sprintf("varchar(%d)", size)
 	}
 
-	if size > int(math.Pow(2, 15)) || size <= 0 {
+	if size > int(math.Pow(2, 15)) {
 		return fmt.Sprintf("char(%d)", size)
 	}
 
-	return fmt.Sprintf("varchar(%d)", size)
+	return "varchar"
 }
 
 func (dialector Dialector) getSchemaTimeType(field *schema.Field) string {
